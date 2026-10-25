@@ -1,3 +1,8 @@
+## 0.1.2 — 2026-10-25
+
+- Replaced the rejected UK demo number in both workflow examples with the library’s US example (+1 201 555 0123), verified against the live free-formatting API.
+- No lookup, authentication, or billing behavior changed.
+
 ## 0.1.1 — 2026-10-25
 
 - Annotated contact workflow examples for n8n template review, with a main setup note and grouped sections.

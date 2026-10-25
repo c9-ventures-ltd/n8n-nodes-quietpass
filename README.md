@@ -102,7 +102,7 @@ Results expire after 24 hours; financial history remains. A process crash before
 
 ## Workflow examples
 
-`examples/` contains inactive exports with fictional numbers and no credentials. Connect your QuietPass credential after import. Paid execution is off until deliberately enabled; quote output is not a lookup result.
+`examples/` contains inactive exports with the phone library’s US example number (+1 201 555 0123) and no credentials. Connect your QuietPass credential after import. Paid execution is off until deliberately enabled; quote output is not a lookup result.
 
 - **Free contact formatting:** normalize example rows and preserve their source references.
 - **Contact enrichment:** review a quote, submit its exact references, then prepare CRM fields. Live execution is off by default. Route errors separately and omit unavailable fields from writes.

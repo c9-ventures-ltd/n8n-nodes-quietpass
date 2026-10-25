@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-quietpass",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "QuietPass phone intelligence: formatting, carrier, portability, network status, SMS and messaging-app checks with spending caps.",
   "license": "MIT",
   "homepage": "https://quietpass.com",

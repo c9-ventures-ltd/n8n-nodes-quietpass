@@ -16,7 +16,7 @@
     {
       "parameters": {
         "mode": "raw",
-        "jsonOutput": "{\"phone\": \"+447700900123\", \"sourceId\": \"example-contact-001\", \"eventId\": \"example:contact-enrichment:001:change-001\"}",
+        "jsonOutput": "{\"phone\": \"+12015550123\", \"sourceId\": \"example-contact-001\", \"eventId\": \"example:contact-enrichment:001:change-001\"}",
         "options": {}
       },
       "id": "example",
