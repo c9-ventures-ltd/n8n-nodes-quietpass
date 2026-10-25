@@ -8,12 +8,13 @@ Repository: `c9-ventures-ltd/n8n-nodes-quietpass`. Package: `n8n-nodes-quietpass
 2. Update `package.json` and `CHANGELOG.md` together. Commit the reviewed release to `main`.
 3. Require a successful CI run: official n8n lint, build, contract tests, and package packing.
 4. Run **Publish QuietPass node** manually from `main`, specifying the exact reviewed version. Leave Publish false for a validation-only run.
-5. For an authorized release, run the same workflow with Publish true. It uses the official n8n release command in GitHub Actions, which requests npm provenance. It never connects to a QuietPass account or runs a live lookup.
-6. Verify the published npm version, integrity, repository, maintainer, and provenance. Download and inspect the published package before submitting it to n8n.
+5. For the first authorized release, run the same workflow with Publish true and release mode **stage**. It runs the official n8n lint/build checks, contract tests, and package inspection, then uses npm's staged publishing command with provenance. The owner approves that exact staged version in npm using 2FA. A new package may show npm's `0.0.0-stage` placeholder until approval. It never connects to a QuietPass account or runs a live lookup.
+6. After configuring and confirming the GitHub Trusted Publisher, release mode **trusted** uses the official n8n release command with provenance. This mode receives no bootstrap token.
+7. Verify the published npm version, integrity, repository, maintainer, and provenance. Download and inspect the published package before submitting it to n8n.
 
 ## Publishing access
 
-For the first release, npm may require a short-lived granular publishing token because the package must exist before its Trusted Publisher can be configured. Have the owner create/save the credential and store it as encrypted `NPM_TOKEN` in this connector repository only. Give it the minimum publish permissions and expiry needed. Never read it into chat or source.
+For the first release, use a short-lived granular token without bypass-2FA permission. The owner creates/saves the credential and stores it as encrypted `NPM_TOKEN` in this connector repository only. Give it the minimum permissions and expiry needed. The workflow stages the version; the owner must enable 2FA and approve it on npm. Never read the token or recovery codes into chat or source. The pinned npm version supports staged publishing; the n8n prerelease guard is run in release mode after the official checks pass.
 
 After the first release, configure npm Trusted Publishing:
 

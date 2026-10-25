@@ -8,10 +8,18 @@ on:
         required: true
         type: string
       publish:
-        description: Publish the reviewed package to npm (otherwise validation only)
+        description: Submit the reviewed package to npm (otherwise validation only)
         required: true
         default: false
         type: boolean
+      release_mode:
+        description: Stage for owner 2FA approval, or publish using an authorized trusted publisher
+        required: true
+        default: stage
+        type: choice
+        options:
+          - stage
+          - trusted
 
 permissions:
   contents: read
@@ -40,6 +48,8 @@ jobs:
         with:
           version: '11.25.0'
           cache: true
+      - name: Install npm with staged publishing support
+        run: npm install --global npm@11.21.1
       - name: Validate release identity
         env:
           REVIEWED_VERSION: ${{ inputs.version }}
@@ -47,7 +57,7 @@ jobs:
           node - <<'JS'
           const p = require('./package.json');
           if (p.name !== 'n8n-nodes-quietpass' || p.version !== process.env.REVIEWED_VERSION || !/^\d+\.\d+\.\d+$/.test(p.version)) throw Error('Release identity mismatch');
-          if (p.repository.url !== 'https://github.com/c9-ventures-ltd/n8n-nodes-quietpass.git') throw Error('Repository mismatch');
+          if (p.repository.url !== 'git+https://github.com/c9-ventures-ltd/n8n-nodes-quietpass.git') throw Error('Repository mismatch');
           JS
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
@@ -55,10 +65,14 @@ jobs:
       - run: pnpm test
       - name: Inspect package before publishing
         run: pnpm pack --out /tmp/quietpass-node.tgz
-      - name: Publish reviewed package with npm provenance
-        if: inputs.publish
-        run: pnpm release
+      - name: Stage reviewed package with npm provenance for owner 2FA approval
+        if: inputs.publish && inputs.release_mode == 'stage'
+        run: npm stage publish --provenance --access public
         env:
-          # Initial package creation may need a short-lived bootstrap token.
-          # Remove it after configuring npm Trusted Publishing for this workflow.
+          # The official n8n prerelease guard requires release mode. Lint,
+          # build, tests, and package inspection have completed above.
+          RELEASE_MODE: 'true'
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish reviewed package using the trusted publisher
+        if: inputs.publish && inputs.release_mode == 'trusted'
+        run: pnpm release
