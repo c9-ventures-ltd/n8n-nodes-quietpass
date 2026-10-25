@@ -1,0 +1,66 @@
+{
+  "name": "n8n-nodes-quietpass",
+  "version": "0.1.0",
+  "description": "QuietPass phone intelligence: formatting, carrier, portability, network status, SMS and messaging-app checks with spending caps.",
+  "license": "MIT",
+  "homepage": "https://quietpass.com",
+  "keywords": [
+    "n8n-community-node-package"
+  ],
+  "author": {
+    "name": "C9 Ventures Ltd",
+    "email": "david@c9-ventures.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/c9-ventures-ltd/n8n-nodes-quietpass.git"
+  },
+  "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release": "n8n-node release",
+    "prepublishOnly": "n8n-node prerelease",
+    "test": "node --test test/*.test.cjs",
+    "check": "pnpm lint && pnpm build && pnpm test"
+  },
+  "files": [
+    "dist/nodes",
+    "dist/credentials",
+    "examples",
+    "RELEASING.md"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/QuietPassApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/QuietPass/QuietPass.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "0.53.4",
+    "@types/node": "24.10.0",
+    "eslint": "9.29.0",
+    "n8n-workflow": "2.44.2",
+    "prettier": "3.6.2",
+    "typescript": "5.9.2"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "bugs": {
+    "url": "https://github.com/c9-ventures-ltd/n8n-nodes-quietpass/issues"
+  },
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

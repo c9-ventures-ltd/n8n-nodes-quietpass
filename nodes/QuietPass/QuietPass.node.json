@@ -1,0 +1,14 @@
+{
+	"node": "n8n-nodes-quietpass.quietPass",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Sales", "Marketing & Content"],
+	"resources": {
+		"credentialDocumentation": [
+			{ "url": "https://github.com/c9-ventures-ltd/n8n-nodes-quietpass#credentials" }
+		],
+		"primaryDocumentation": [
+			{ "url": "https://github.com/c9-ventures-ltd/n8n-nodes-quietpass#readme" }
+		]
+	}
+}

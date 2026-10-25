@@ -1,0 +1,164 @@
+{
+  "name": "QuietPass \u2014 contact enrichment with an original quote",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\"phone\": \"+447700900123\", \"sourceId\": \"example-contact-001\", \"eventId\": \"example:contact-enrichment:001:change-001\"}",
+        "options": {}
+      },
+      "id": "example",
+      "name": "Example contact",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "phoneNumber",
+        "operation": "quote",
+        "phone": "={{ $json.phone }}",
+        "defaultCountry": "",
+        "checks": [
+          "basic_line_type",
+          "enhanced_line_type",
+          "current_carrier",
+          "mnp",
+          "live_status",
+          "sms",
+          "whatsapp",
+          "telegram"
+        ],
+        "currency": "GBP",
+        "maximumPrice": "0.05",
+        "sourceEventId": "={{ $json.eventId }}",
+        "options": {}
+      },
+      "id": "quote",
+      "name": "Review lookup quote",
+      "type": "n8n-nodes-quietpass.quietPass",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "phoneNumber",
+        "operation": "execute",
+        "quoteId": "={{ $json.operation.quoteId }}",
+        "maxSpendMicros": "={{ $json.operation.maxSpendMicros }}",
+        "requestKey": "={{ $json.operation.requestKey }}",
+        "currency": "={{ $json.operation.currency }}",
+        "allowLive": false,
+        "maximumTotalPrice": "0.05",
+        "options": {}
+      },
+      "id": "execute",
+      "name": "Submit original quote",
+      "type": "n8n-nodes-quietpass.quietPass",
+      "typeVersion": 1,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({sourceId: $(\"Example contact\").item.json.sourceId, phone: $json.number.e164, requestId: $json.requestId, ...($json.number.carrier == null ? {} : {carrier: $json.number.carrier}), ...($json.contact.whatsapp.registered == null ? {} : {whatsappRegistered: $json.contact.whatsapp.registered}), ...($json.contact.telegram.registered == null ? {} : {telegramRegistered: $json.contact.telegram.registered}), ...($json.contact.sms.supported == null ? {} : {smsSupported: $json.contact.sms.supported, smsAssumed: $json.contact.sms.assumed})}) }}",
+        "options": {}
+      },
+      "id": "prepare",
+      "name": "Prepared CRM fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Contact enrichment \u2014 live execution OFF\nConnect a QuietPass API credential to both QuietPass nodes. This workflow gets a free quote, then intentionally stops because Allow Live Lookup is OFF. Review GBP currency and the 0.05 price/batch caps before enabling it. Manual execution then spends real QuietPass credit. Use only authorized numbers. Fictional sample data is not a real contact.\n\nReplace Example contact with a changed-phone CRM trigger and a stable namespaced event ID. Save original operation references before execution in production. Do not insert delays between quote and execute. Map Prepared CRM fields to your CRM; unknown values are omitted and false is retained. This example performs no CRM writes.",
+        "height": 430,
+        "width": 600
+      },
+      "id": "note",
+      "name": "Read me",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -470
+      ]
+    }
+  ],
+  "connections": {
+    "Start manually": {
+      "main": [
+        [
+          {
+            "node": "Example contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Example contact": {
+      "main": [
+        [
+          {
+            "node": "Review lookup quote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review lookup quote": {
+      "main": [
+        [
+          {
+            "node": "Submit original quote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit original quote": {
+      "main": [
+        [
+          {
+            "node": "Prepared CRM fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "tags": []
+}

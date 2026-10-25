@@ -1,0 +1,119 @@
+{
+  "name": "QuietPass \u2014 free contact formatting",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\"phone\": \"+447700900123\", \"sourceId\": \"example-contact-001\", \"eventId\": \"example:contact-enrichment:001:change-001\"}",
+        "options": {}
+      },
+      "id": "example",
+      "name": "Example contact",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "phoneNumber",
+        "operation": "format",
+        "phone": "={{ $json.phone }}",
+        "defaultCountry": "",
+        "options": {}
+      },
+      "id": "format",
+      "name": "Format phone number",
+      "type": "n8n-nodes-quietpass.quietPass",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({sourceId: $(\"Example contact\").item.json.sourceId, phone: $json.number.e164, country: $json.number.country, valid: $json.number.valid, lineType: $json.number.type}) }}",
+        "options": {}
+      },
+      "id": "prepare",
+      "name": "Prepared contact fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Free contact formatting\nConnect a QuietPass API credential to the QuietPass node, then Execute Workflow. Uses fictional input and free numbering-plan checks only. Replace Example contact with your spreadsheet or CRM trigger. Prepared contact fields is output only; no CRM is modified.",
+        "height": 260,
+        "width": 450
+      },
+      "id": "note",
+      "name": "Read me",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -300
+      ]
+    }
+  ],
+  "connections": {
+    "Start manually": {
+      "main": [
+        [
+          {
+            "node": "Example contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Example contact": {
+      "main": [
+        [
+          {
+            "node": "Format phone number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format phone number": {
+      "main": [
+        [
+          {
+            "node": "Prepared contact fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "tags": []
+}
