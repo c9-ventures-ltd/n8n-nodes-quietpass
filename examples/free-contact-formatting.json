@@ -1,5 +1,5 @@
 {
-  "name": "QuietPass \u2014 free contact formatting",
+  "name": "Normalize phone numbers for contact lists with QuietPass",
   "active": false,
   "nodes": [
     {
@@ -62,17 +62,50 @@
     },
     {
       "parameters": {
-        "content": "## Free contact formatting\nConnect a QuietPass API credential to the QuietPass node, then Execute Workflow. Uses fictional input and free numbering-plan checks only. Replace Example contact with your spreadsheet or CRM trigger. Prepared contact fields is output only; no CRM is modified.",
-        "height": 260,
-        "width": 450
+        "content": "## Normalize contact phone numbers\nUse this template to prepare consistent phone fields before importing contacts into a spreadsheet or CRM. It starts with a fictional contact and does not modify any external contact system.\n\n### How it works\nThe manual trigger passes a contact ID and phone number to QuietPass. The free formatting operation returns international and national formats, numbering-plan validity, country, and basic line type. The final step keeps the original contact reference alongside the formatted output. These checks describe numbering rules; they do not prove that a number is assigned, owned, reachable, or able to receive a message.\n\n### Setup\nInstall n8n-nodes-quietpass on a compatible self-hosted n8n instance while n8n verification is pending. Create a QuietPass account and add its server API key through the QuietPass API credential. Select that credential in Format phone number. Run the fictional example, then replace Example contact with your authorized source data. Map a two-letter country for national input, or use international input. This template uses free checks only. Connect the prepared output to your destination only after reviewing the result; no destination or messaging action is configured.",
+        "height": 820,
+        "width": 620,
+        "color": 1
       },
       "id": "note",
-      "name": "Read me",
+      "name": "How this template works",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        0,
+        -740,
         -300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Prepare source contacts\nReplace fictional input with your authorized source.",
+        "height": 340,
+        "width": 420,
+        "color": 7
+      },
+      "id": "section-1",
+      "name": "Section 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Free number formatting\nReview normalized contact fields before connecting a destination.",
+        "height": 340,
+        "width": 500,
+        "color": 7
+      },
+      "id": "section-2",
+      "name": "Section 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        420,
+        -120
       ]
     }
   ],

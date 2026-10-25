@@ -1,5 +1,5 @@
 {
-  "name": "QuietPass \u2014 contact enrichment with an original quote",
+  "name": "Prepare carrier and messaging fields for CRM contacts with QuietPass",
   "active": false,
   "nodes": [
     {
@@ -96,17 +96,50 @@
     },
     {
       "parameters": {
-        "content": "## Contact enrichment \u2014 live execution OFF\nConnect a QuietPass API credential to both QuietPass nodes. This workflow gets a free quote, then intentionally stops because Allow Live Lookup is OFF. Review GBP currency and the 0.05 price/batch caps before enabling it. Manual execution then spends real QuietPass credit. Use only authorized numbers. Fictional sample data is not a real contact.\n\nReplace Example contact with a changed-phone CRM trigger and a stable namespaced event ID. Save original operation references before execution in production. Do not insert delays between quote and execute. Map Prepared CRM fields to your CRM; unknown values are omitted and false is retained. This example performs no CRM writes.",
-        "height": 430,
-        "width": 600
+        "content": "## Prepare contact intelligence with a spending cap\nUse this template to prepare carrier, SMS-support, and messaging-registration fields for contact enrichment. It starts with fictional data and does not write to a CRM or send messages.\n\n### How it works\nQuietPass first returns a free quote for the selected checks. The next node submits the original quote, ceiling, currency, and event key. Paid execution is deliberately OFF, so the initial rehearsal stops before spending credit. Once deliberately enabled, the final step prepares contact fields while preserving definite false answers and omitting unavailable values. App registration and SMS support do not guarantee message delivery, ownership, or consent.\n\n### Setup\nInstall n8n-nodes-quietpass on a compatible self-hosted instance while n8n verification is pending. Create a QuietPass account with activated credit and a server API key. Select its QuietPass API credential in both QuietPass nodes. Replace the fictional contact with an authorized number, confirm GBP matches your workspace, and review the 0.05 per-number and run ceilings before enabling Allow Live Lookup. Manual execution then spends real credit.\n\nUse stable source event IDs for changed numbers. Save original operation references durably before execution in production. Recover interrupted requests using the original quote; do not requote blindly or insert delays. Connect prepared output to your CRM only after reviewing the mapping.",
+        "height": 820,
+        "width": 620,
+        "color": 1
       },
       "id": "note",
-      "name": "Read me",
+      "name": "How this template works",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        0,
-        -470
+        -740,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Prepare source contacts\nReplace fictional input with your authorized source.",
+        "height": 340,
+        "width": 420,
+        "color": 7
+      },
+      "id": "section-1",
+      "name": "Section 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Quote and prepare enrichment\nReview the quote and spending caps. Paid execution is OFF by default.",
+        "height": 340,
+        "width": 720,
+        "color": 7
+      },
+      "id": "section-2",
+      "name": "Section 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        420,
+        -120
       ]
     }
   ],

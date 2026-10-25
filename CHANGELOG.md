@@ -1,3 +1,8 @@
+## 0.1.1 — 2026-10-25
+
+- Annotated contact workflow examples for n8n template review, with a main setup note and grouped sections.
+- Clarified npm availability and pending n8n verification. No lookup or billing behavior changed.
+
 ## 0.1.0 — 2026-10-25
 
 - Dedicated QuietPass n8n node and masked server-key credential.

@@ -6,11 +6,11 @@ This dedicated node calls the current [QuietPass API](https://quietpass.com/docs
 
 ## Availability
 
-Version 0.1.0 is the initial release candidate. npm publication and n8n verification are separate checkpoints. Until n8n approves it, the node is not discoverable in n8n Cloud. The existing [HTTP workflow and developer starter kit](https://quietpass.com/docs/#integration-kit) remain available.
+The package is available on npm for self-hosted n8n. It has been submitted for n8n verification; until n8n approves it, the node is not discoverable in n8n Cloud. npm publication and n8n verification are separate checkpoints. The existing [HTTP workflow and developer starter kit](https://quietpass.com/docs/#integration-kit) remain available.
 
 ## Installation
 
-After npm publication, self-hosted instance owners can install `n8n-nodes-quietpass` from **Settings → Community nodes → Install**. Follow [n8n's installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
+Self-hosted instance owners can install `n8n-nodes-quietpass` from **Settings → Community nodes → Install**. Follow [n8n's installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
 
 For local development, use Node.js 22 or 24 and the pinned package manager:
 
