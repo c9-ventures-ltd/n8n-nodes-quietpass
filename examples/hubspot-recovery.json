@@ -1,0 +1,473 @@
+{
+  "name": "Recover a QuietPass HubSpot write from its original saved result",
+  "active": false,
+  "nodes": [
+    {
+      "id": "start-manually",
+      "name": "Start manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "configuration",
+      "name": "Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        280,
+        0
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\"contactId\":\"REPLACE_ORIGINAL_CONTACT_ID\",\"portalId\":\"REPLACE_HUBSPOT_PORTAL_ID\",\"operationId\":\"REPLACE_ORIGINAL_OPERATION_ID\",\"revision\":\"REPLACE_ORIGINAL_PHONE_REVISION\",\"defaultCountry\":\"\"}",
+        "options": {}
+      }
+    },
+    {
+      "id": "validate-original-references",
+      "name": "Validate original references",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const c=$json; if(!/^[1-9][0-9]{0,25}$/.test(c.contactId)||!/^[1-9][0-9]{0,25}$/.test(c.portalId)||!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(c.operationId)||!Number.isFinite(Date.parse(c.revision))) throw Error('Enter the ORIGINAL operation, contact, and phone-history revision from the failed execution.'); return [{json:c}];"
+      }
+    },
+    {
+      "id": "read-hubspot-account",
+      "name": "Read HubSpot account",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        840,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.hubapi.com/account-info/v3/details",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "hubspotAppToken",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "verify-hubspot-account",
+      "name": "Verify HubSpot account",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "jsCode": "if(String($json.portalId)!==$('Configuration').first().json.portalId)throw Error('The HubSpot credential belongs to another portal.');return [{json:$json}];"
+      }
+    },
+    {
+      "id": "read-retained-result",
+      "name": "Read retained result",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1400,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ \"https://quietpass.com/v1/automation/operations/\" + $(\"Configuration\").first().json.operationId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "quietPassApi",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "result-is-settled",
+      "name": "Result is settled",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        440
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "Result is settled",
+              "leftValue": "={{ $json.state === \"settled\" && $json.resultState === \"settled\" && !!$json.result?.requestId }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "read-current-contact",
+      "name": "Read current contact",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        280,
+        440
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ \"https://api.hubapi.com/crm/v3/objects/contacts/\" + $(\"Configuration\").first().json.contactId + \"?properties=phone,hs_country_region_code,qp_phone_request_id&propertiesWithHistory=phone\" }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "hubspotAppToken",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "format-current-phone",
+      "name": "Format current phone",
+      "type": "n8n-nodes-quietpass.quietPass",
+      "typeVersion": 1,
+      "position": [
+        560,
+        440
+      ],
+      "parameters": {
+        "resource": "phoneNumber",
+        "operation": "format",
+        "phone": "={{ $json.properties.phone || \"\" }}",
+        "defaultCountry": "={{ $json.properties.hs_country_region_code || $(\"Configuration\").first().json.defaultCountry }}",
+        "options": {}
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "guard-current-source",
+      "name": "Guard current source",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        840,
+        440
+      ],
+      "parameters": {
+        "jsCode": "function phoneRevision(contact){\n const history=contact.propertiesWithHistory?.phone;\n if(!Array.isArray(history)||!history.length)return null;\n const sorted=history.filter(v=>typeof v.timestamp==='string'&&Number.isFinite(Date.parse(v.timestamp))).sort((a,b)=>Date.parse(b.timestamp)-Date.parse(a.timestamp));\n return sorted[0]?.timestamp??null;\n}\nfunction retainedResult(operation){\n const r=operation?.result;\n return operation?.state==='settled'&&operation.resultState==='settled'&&typeof r?.requestId==='string'&&r.number?.valid===true&&typeof r.number.e164==='string';\n}\nfunction writeGuard(contact,formatted,operation,identity){\n const reason=!retainedResult(operation)?'result_not_ready':String(contact.id)!==identity.contactId?'contact_changed':phoneRevision(contact)!==identity.revision?'source_revision_changed':formatted.number?.valid!==true||formatted.number.e164!==operation.result.number.e164?'source_phone_changed':contact.properties?.qp_phone_request_id===operation.result.requestId?'already_written':null;\n if(reason)return {write:false,reason,operationId:operation.id};\n const r=operation.result,s=r.contact?.sms??{},scalar=v=>typeof v==='boolean'?String(v):typeof v==='string'?v.slice(0,300):'';\n const reasons=[r.number.validationReason,r.number.typeReason,r.number.carrierReason,r.number.portedReason,s.reason,r.contact?.whatsapp?.reason,r.contact?.telegram?.reason,r.network?.reason].filter(v=>typeof v==='string');\n const fields={e164:r.number.e164,country:r.number.country,valid:r.number.valid,type:r.number.type,carrier:r.number.carrier,ported:r.number.ported,sms:s.supported,sms_basis:s.basis,whatsapp:r.contact?.whatsapp?.registered,telegram:r.contact?.telegram?.registered,reachable:r.network?.reachable,status:reasons.length?'partial':'completed',reason:[...new Set(reasons)].join('; '),checked_at:r.preparedAt,request_id:r.requestId};\n return {write:true,operationId:operation.id,requestId:r.requestId,contactId:identity.contactId,revision:identity.revision,properties:Object.fromEntries(Object.entries(fields).map(([k,v])=>['qp_phone_'+k,scalar(v)]))};\n}\nreturn [{json:writeGuard($('Read current contact').first().json,$json,$('Read retained result').first().json,$('Configuration').first().json)}];"
+      }
+    },
+    {
+      "id": "safe-to-write",
+      "name": "Safe to write",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        440
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "Safe to write",
+              "leftValue": "={{ $json.write === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "write-quietpass-fields",
+      "name": "Write QuietPass fields",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1400,
+        440
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ \"https://api.hubapi.com/crm/v3/objects/contacts/\" + $json.contactId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "hubspotAppToken",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({properties:$json.properties}) }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "write-receipt",
+      "name": "Write receipt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        440
+      ],
+      "parameters": {
+        "jsCode": "const r=$('Guard current source').first().json;return [{json:{state:'recovered',operationId:r.operationId,requestId:r.requestId,contactId:r.contactId,revision:r.revision}}];"
+      }
+    },
+    {
+      "id": "retain-operation-for-review",
+      "name": "Retain operation for review",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2100,
+        880
+      ],
+      "parameters": {
+        "jsCode": "return [{json:{state:'review',reason:$json.reason||'result_pending_or_expired',operationId:$('Configuration').first().json.operationId}}];"
+      }
+    },
+    {
+      "id": "read-only-recovery",
+      "name": "Read-only recovery",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -600
+      ],
+      "parameters": {
+        "content": "## Recover a HubSpot write without purchasing\nUse the ORIGINAL operation ID, contact ID, and phone-history timestamp from the failed execution. Select your own QuietPass and HubSpot Service Key credentials.\n\nThis workflow has no prepare, run, quote, or purchase request. It works while QuietPass purchases are paused. Only settled results retained by QuietPass can be used (24 hours). It rereads and normalizes the current phone before writing only qp_phone_* fields. Changed source or already-written receipts are skipped.\n\nNever substitute a new operation, revision, or raw stale PATCH to hide an error. If the result expired, review before explicitly authorizing a new check. Restrict n8n execution access and retention.\n\nGuide: https://quietpass.com/integrations/n8n/",
+        "width": 880,
+        "height": 520,
+        "color": 7
+      }
+    }
+  ],
+  "connections": {
+    "Start manually": {
+      "main": [
+        [
+          {
+            "node": "Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuration": {
+      "main": [
+        [
+          {
+            "node": "Validate original references",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate original references": {
+      "main": [
+        [
+          {
+            "node": "Read HubSpot account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read HubSpot account": {
+      "main": [
+        [
+          {
+            "node": "Verify HubSpot account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify HubSpot account": {
+      "main": [
+        [
+          {
+            "node": "Read retained result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read retained result": {
+      "main": [
+        [
+          {
+            "node": "Result is settled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result is settled": {
+      "main": [
+        [
+          {
+            "node": "Read current contact",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retain operation for review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read current contact": {
+      "main": [
+        [
+          {
+            "node": "Format current phone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format current phone": {
+      "main": [
+        [
+          {
+            "node": "Guard current source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard current source": {
+      "main": [
+        [
+          {
+            "node": "Safe to write",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Safe to write": {
+      "main": [
+        [
+          {
+            "node": "Write QuietPass fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retain operation for review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write QuietPass fields": {
+      "main": [
+        [
+          {
+            "node": "Write receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": true,
+    "executionTimeout": 120
+  },
+  "pinData": {},
+  "tags": []
+}

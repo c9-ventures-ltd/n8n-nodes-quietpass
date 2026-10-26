@@ -6,7 +6,7 @@ This dedicated node calls the current [QuietPass API](https://quietpass.com/docs
 
 ## Availability
 
-The package is available on npm for self-hosted n8n. It has been submitted for n8n verification; until n8n approves it, the node is not discoverable in n8n Cloud. npm publication and n8n verification are separate checkpoints. The existing [HTTP workflow and developer starter kit](https://quietpass.com/docs/#integration-kit) remain available.
+The package is available on npm for self-hosted n8n. n8n approved it as a verified node on October 26, 2026. Cloud publication is pending the next release batch, expected within 14 days. npm availability, node verification, and template-library review are separate checkpoints. The existing [HTTP workflow and developer starter kit](https://quietpass.com/docs/#integration-kit) remain available.
 
 ## Installation
 
@@ -120,3 +120,9 @@ Programmatic style is needed for dependent quote/execute calls, whole-batch spen
 The public source contains only this connector. Releases must pass lint, build, and tests, then publish through `.github/workflows/publish.yml` with npm provenance. Publication does not imply verification. See [RELEASING.md](RELEASING.md).
 
 Support: [hello@quietpass.com](mailto:hello@quietpass.com). Include the request ID and original Quote ID, never an API key or a customer list.
+
+## HubSpot CRM workflows
+
+[Set up the CRM and recovery workflows](https://quietpass.com/integrations/n8n/). The new [contact-check workflow](examples/hubspot-crm.json) verifies the source, uses shared spending limits and a saved original operation, and writes only QuietPass properties. The separate [recovery workflow](examples/hubspot-recovery.json) retrieves the original result and retries a guarded CRM write without another purchase. Both start inactive; paid execution is off and the ceiling is zero. Select your own credentials and review any connections n8n selects during import.
+
+The installed n8n 2.44.6 engine passed eight fictional cases, including forced write failure and recovery, without real supplier requests or credit use. The approved node stays at version 0.1.2. n8n approved it on October 26, 2026; verified Cloud publication is pending its next release batch, expected within 14 days. Template-library publication is a separate review.
