@@ -6,9 +6,13 @@ This dedicated node calls the current [QuietPass API](https://quietpass.com/docs
 
 ## Availability
 
-The package is available on npm for self-hosted n8n. n8n approved it as a verified node on October 26, 2026. Cloud publication is pending the next release batch, expected within 14 days. npm availability, node verification, and template-library review are separate checkpoints. The existing [HTTP workflow and developer starter kit](https://quietpass.com/docs/#integration-kit) remain available.
+The verified node is live in n8n Cloud and available on npm for compatible self-hosted n8n instances. Version 0.1.2 was verified on October 26 and published to Cloud on October 27, 2026; the creator portal still shows LIVE on November 1. Workflow-template review is separate and remains pending.
+
+[Open the setup guide and downloadable CRM workflows](https://quietpass.com/integrations/n8n/), or [browse all QuietPass integrations](https://quietpass.com/integrations/).
 
 ## Installation
+
+In n8n Cloud, an instance owner or admin can open the canvas node panel, search for **QuietPass**, select it under **More from the community**, and choose **Install**.
 
 Self-hosted instance owners can install `n8n-nodes-quietpass` from **Settings → Community nodes → Install**. Follow [n8n's installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
 
@@ -125,4 +129,4 @@ Support: [hello@quietpass.com](mailto:hello@quietpass.com). Include the request 
 
 [Set up the CRM and recovery workflows](https://quietpass.com/integrations/n8n/). The new [contact-check workflow](examples/hubspot-crm.json) verifies the source, uses shared spending limits and a saved original operation, and writes only QuietPass properties. The separate [recovery workflow](examples/hubspot-recovery.json) retrieves the original result and retries a guarded CRM write without another purchase. Both start inactive; paid execution is off and the ceiling is zero. Select your own credentials and review any connections n8n selects during import.
 
-The installed n8n 2.44.6 engine passed eight fictional cases, including forced write failure and recovery, without real supplier requests or credit use. The approved node stays at version 0.1.2. n8n approved it on October 26, 2026; verified Cloud publication is pending its next release batch, expected within 14 days. Template-library publication is a separate review.
+The installed n8n 2.44.6 engine passed eight fictional cases, including forced write failure and recovery, without real supplier requests or credit use. The approved node stays at version 0.1.2. n8n approved it on October 26, 2026; verified Cloud publication was confirmed October 27 and rechecked November 1. Template-library publication is a separate review, still pending.
