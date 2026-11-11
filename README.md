@@ -6,7 +6,7 @@ This dedicated node calls the current [QuietPass API](https://quietpass.com/docs
 
 ## Availability
 
-The verified node is live in n8n Cloud and available on npm for compatible self-hosted n8n instances. Version 0.1.2 was verified on October 26 and published to Cloud on October 27, 2026; the creator portal still shows LIVE on November 1. Workflow-template review is separate and remains pending.
+The QuietPass node is verified and available in n8n Cloud. It is also available on npm for compatible self-hosted n8n instances.
 
 [Open the setup guide and downloadable CRM workflows](https://quietpass.com/integrations/n8n/), or [browse all QuietPass integrations](https://quietpass.com/integrations/).
 
@@ -129,4 +129,4 @@ Support: [hello@quietpass.com](mailto:hello@quietpass.com). Include the request 
 
 [Set up the CRM and recovery workflows](https://quietpass.com/integrations/n8n/). The new [contact-check workflow](examples/hubspot-crm.json) verifies the source, uses shared spending limits and a saved original operation, and writes only QuietPass properties. The separate [recovery workflow](examples/hubspot-recovery.json) retrieves the original result and retries a guarded CRM write without another purchase. Both start inactive; paid execution is off and the ceiling is zero. Select your own credentials and review any connections n8n selects during import.
 
-The installed n8n 2.44.6 engine passed eight fictional cases, including forced write failure and recovery, without real supplier requests or credit use. The approved node stays at version 0.1.2. n8n approved it on October 26, 2026; verified Cloud publication was confirmed October 27 and rechecked November 1. Template-library publication is a separate review, still pending.
+The CRM examples were tested in n8n 2.44.6 with fictional contacts, including failed writes and recovery, without live lookups or credit use.
