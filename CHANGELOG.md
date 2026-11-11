@@ -1,3 +1,9 @@
+## 0.1.3 — 2026-11-11
+
+- Updated the npm README to reflect verified n8n Cloud availability and link to the setup guide and downloadable workflows.
+- Included the HubSpot contact and recovery examples already available in the public repository.
+- No node, credential, lookup, or billing behavior changed.
+
 ## 0.1.2 — 2026-10-25
 
 - Replaced the rejected UK demo number in both workflow examples with the library’s US example (+1 201 555 0123), verified against the live free-formatting API.
