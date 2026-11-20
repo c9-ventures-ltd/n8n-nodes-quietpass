@@ -2,7 +2,7 @@
 
 Phone intelligence for contact workflows: free formatting and validation, carrier and portability data, live network status, SMS support, and WhatsApp/Telegram registration.
 
-This dedicated node calls the current [QuietPass API](https://quietpass.com/docs/). A QuietPass account with activated credit and a server API key is required. The node is free to install; live checks use existing QuietPass credit at your workspace prices.
+[QuietPass](https://quietpass.com/) provides phone number and messaging account checks through one API. This dedicated node calls the current [QuietPass API](https://quietpass.com/docs/). A QuietPass account with activated credit and a server API key is required. The node is free to install; live checks use existing QuietPass credit at your workspace prices.
 
 ## Availability
 
