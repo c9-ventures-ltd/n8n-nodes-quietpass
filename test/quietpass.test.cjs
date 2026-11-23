@@ -267,3 +267,16 @@ test('a zero-price quote and zero settlement remain valid without a fabricated c
   assert.equal(f.calls[1].body.maxSpendMicros, 0);
   assert.equal(output.json.billing.chargedMicros, 0);
 });
+
+test('reserved and partial API results pass through without losing context or coercing unknown to false', async () => {
+  const reserved = { ...result(), number: { ...result().number, reserved: true }, contact: { sms: { supported: null, assumed: false, basis: 'unknown', reason: 'reserved_number' }, whatsapp: { registered: null, reason: 'reserved_number' } }, billing: {currency:'GBP',chargedMicros:0} };
+  const f = harness({}, [quote({maxMicros:0}), reserved]);
+  const [[output]] = await f.run();
+  assert.equal(output.json.number.reserved,true);
+  assert.equal(output.json.contact.whatsapp.registered,null);
+  assert.equal(output.json.contact.whatsapp.reason,'reserved_number');
+  assert.equal(output.json.billing.chargedMicros,0);
+  const partial={...result(),number:{...result().number,carrier:null,carrierReason:'ambiguous_carrier'},network:{reachable:null,reason:'unsupported_number_type'}};
+  const p=harness({},[quote(),partial]);const [[answer]]=await p.run();
+  assert.equal(answer.json.number.carrierReason,'ambiguous_carrier');assert.equal(answer.json.network.reason,'unsupported_number_type');assert.equal(answer.json.contact.whatsapp.registered,false);
+});
