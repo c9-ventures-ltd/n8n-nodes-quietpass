@@ -58,6 +58,12 @@ The node validates the batch, obtains a free quote, checks currency, price, and 
 
 ## Results and mappings
 
+A valid format does not prove assignment or reachability. Recognized non-working example numbers return `number.reserved: true`; their live paid checks are skipped with no charge. Route these records for correction. If the flag is absent, assignment is still unknown.
+
+Keep each unknown answer and its reason together. `unsupported_number_type` explains why a live-status check could not answer; `temporarily_unavailable` means the check was not confirmed; `ambiguous_carrier` means no current carrier was identified. Keep `null` separate from a definite `false`. See [result meanings and next steps](https://quietpass.com/docs/api/#result-context).
+
+The node passes these API fields through without conversion, so this change needs no node upgrade or credential change. Existing installed workflows remain unchanged. Updated CRM examples preserve a reserved status and the reasons in QuietPass-owned fields.
+
 Results keep the QuietPass API structure:
 
 ```text
